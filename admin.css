@@ -139,11 +139,11 @@ button{cursor:pointer;}
 .textarea{resize:vertical;min-height:90px;}
 
 /* ── Quill editor overrides ── */
-.ql-container { font-family: "Outfit", sans-serif; font-size: .95rem; border-bottom-left-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); border-color: var(--line2) !important; }
+.ql-container { font-family: "Outfit", sans-serif; font-size: .95rem; border-bottom-left-radius: var(--radius-md); border-bottom-right-radius: var(--radius-md); border-color: var(--line2) !important; overflow: hidden; }
 .ql-toolbar { border-top-left-radius: var(--radius-md); border-top-right-radius: var(--radius-md); border-color: var(--line2) !important; background: var(--surface2); }
 .ql-container.ql-snow, .ql-toolbar.ql-snow { border-color: var(--line2); }
 .field:focus-within .ql-container, .field:focus-within .ql-toolbar { border-color: var(--brand); }
-.ql-editor { min-height: 220px; line-height: 1.75; color: var(--text); }
+.ql-editor { min-height: 220px; line-height: 1.75; color: var(--text); overflow-y: auto; }
 .ql-editor.ql-blank::before { color: #aab4cc; font-style: normal; }
 
 .ql-editor img {
