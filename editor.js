@@ -28,6 +28,12 @@ export function createEditor(container, placeholder = "Write here...") {
       <button type="button" data-cmd="outdent" title="Outdent">⇤</button>
       <span class="re-sep"></span>
       <button type="button" data-cmd="removeFormat" title="Clear Format">✕</button>
+      <span class="re-sep"></span>
+      <button type="button" id="re-img-url-btn" title="Insert Image from URL">🌐 Img URL</button>
+      <label class="re-upload-label" title="Upload Image">
+        📁 Upload
+        <input type="file" id="re-img-upload" accept="image/*" style="display:none"/>
+      </label>
     </div>
     <div class="re-body" contenteditable="true" spellcheck="true"></div>
   `;
@@ -36,6 +42,41 @@ export function createEditor(container, placeholder = "Write here...") {
   const body = container.querySelector(".re-body");
   const blockSel = container.querySelector("#re-block-sel");
   const fgColor = container.querySelector("#re-fgcolor");
+  const imgUrlBtn = container.querySelector("#re-img-url-btn");
+  const imgUpload = container.querySelector("#re-img-upload");
+
+  // ── Image from URL ──
+  imgUrlBtn.addEventListener("click", () => {
+    const url = prompt("Image URL daalo:");
+    if (!url) return;
+    restoreSelection();
+    document.execCommand("insertHTML", false, `<img src="${url}" style="max-width:100%;border-radius:8px;margin:8px 0" alt="image"/>`);
+    saveSelection();
+  });
+
+  // ── Image Upload to Firebase Storage ──
+  imgUpload.addEventListener("change", async function () {
+    const file = this.files[0];
+    if (!file) return;
+    const label = container.querySelector(".re-upload-label");
+    label.textContent = "Uploading...";
+    try {
+      const { getStorage, ref, uploadBytes, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js");
+      const { getApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
+      const storage = getStorage(getApp());
+      const storageRef = ref(storage, `post-images/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      restoreSelection();
+      document.execCommand("insertHTML", false, `<img src="${downloadURL}" style="max-width:100%;border-radius:8px;margin:8px 0" alt="image"/>`);
+      saveSelection();
+    } catch (e) {
+      alert("Image upload failed: " + e.message);
+    } finally {
+      label.textContent = "📁 Upload";
+      this.value = "";
+    }
+  });
 
   // Set placeholder via CSS attr
   body.setAttribute("data-placeholder", placeholder);
