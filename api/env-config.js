@@ -6,6 +6,7 @@ export default function handler(req, res) {
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.FIREBASE_APP_ID,
+    imgbbKey: process.env.IMGBB_API_KEY,
   };
   res.setHeader("Content-Type", "application/javascript");
   res.setHeader("Cache-Control", "no-store");
