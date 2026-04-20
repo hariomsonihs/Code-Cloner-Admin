@@ -332,7 +332,8 @@ function renderList() {
       <td><span class="badge badge-gray">${esc(d.readTime||"—")}</span></td>
       <td class="td-muted">${formatDate(d.createdAt)}</td>
       <td>
-        <div style="display:flex;gap:.4rem">
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="btn btn-sm" style="background:${d.featured?'#fef08a':'rgba(245,158,11,.08)'};color:${d.featured?'#854d0e':'var(--orange)'};border:1.5px solid rgba(245,158,11,.3)" onclick="toggleFeatured('${d.id}',${!!d.featured})">${d.featured?'⭐ Featured':'☆ Feature'}</button>
           <button class="btn btn-green btn-sm" onclick="editDoc('${d.id}')">Edit</button>
           <button class="btn btn-danger btn-sm" onclick="delDoc('${d.id}')">Delete</button>
         </div>
