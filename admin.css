@@ -126,7 +126,9 @@ button{cursor:pointer;}
 /* ── Form ── */
 .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;}
 .form-grid .full{grid-column:1/-1;}
+.field{display:flex;flex-direction:column;}
 .field label{display:block;font-size:.82rem;font-weight:600;color:var(--muted);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em;}
+.field .input,.field .select,.field .textarea{margin-top:0;}
 .input,.select,.textarea{
   width:100%;border:1.5px solid var(--line2);border-radius:var(--radius-md);
   background:var(--surface2);color:var(--text);
