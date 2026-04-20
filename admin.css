@@ -146,6 +146,15 @@ button{cursor:pointer;}
 .ql-editor { min-height: 220px; line-height: 1.75; color: var(--text); }
 .ql-editor.ql-blank::before { color: #aab4cc; font-style: normal; }
 
+.ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  margin: .75rem auto;
+  box-shadow: 0 2px 12px rgba(68,94,139,.1);
+}
+
 /* ── Rich editor (custom) ── */
 .re-wrap{border:1.5px solid var(--line2);border-radius:var(--radius-md);overflow:hidden;background:var(--surface);}
 .re-wrap:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px rgba(79,110,247,.12);}
