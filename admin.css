@@ -151,9 +151,15 @@ button{cursor:pointer;}
   width: 100% !important;
   height: auto !important;
   border-radius: 10px;
-  display: block;
-  margin: .75rem auto;
+  display: block !important;
+  margin: .75rem auto !important;
   box-shadow: 0 2px 12px rgba(68,94,139,.1);
+  object-fit: contain;
+}
+.ql-container img, .ql-editor p img, .ql-editor span img {
+  max-width: 480px !important;
+  width: 100% !important;
+  height: auto !important;
 }
 
 /* ── Rich editor (custom) ── */
