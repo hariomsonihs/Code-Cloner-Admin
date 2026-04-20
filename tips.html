@@ -129,6 +129,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { saveNotification } from "./notif-helper.js";
+import { addImageUploadToQuill } from "./quill-image.js";
 
 const quill = new Quill("#tipEditor", {
   theme: "snow",
@@ -141,16 +142,16 @@ const quill = new Quill("#tipEditor", {
       [{ list: "ordered" }, { list: "bullet" }],
       [{ indent: "-1" }, { indent: "+1" }],
       ["blockquote","code-block"],
-      ["link"],
+      ["link","image"],
       ["clean"]
     ],
     history: { delay: 1000, maxStack: 100, userOnly: true }
   }
 });
 
-
 const cfg=window.__env||{};
 const app=initializeApp(cfg); const db=getFirestore(app); const auth=getAuth(app);
+addImageUploadToQuill(quill, app);
 onAuthStateChanged(auth,user=>{if(!user){location.href="index.html";return;}document.getElementById("userEmail").textContent=user.email;document.getElementById("userAvatar").textContent=user.email[0].toUpperCase();document.body.classList.add("ready");});
 document.getElementById("logoutBtn").addEventListener("click",()=>signOut(auth).then(()=>location.href="index.html"));
 
