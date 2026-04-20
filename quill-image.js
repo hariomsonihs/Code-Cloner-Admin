@@ -88,5 +88,19 @@ export function addImageUploadToQuill(quill, app) {
 function insertImage(quill, url) {
   const range = quill.getSelection(true);
   quill.insertEmbed(range.index, "image", url);
+  // Turant size set karo inserted image pe
+  setTimeout(() => {
+    const imgs = quill.root.querySelectorAll("img");
+    imgs.forEach(img => {
+      if (!img.style.maxWidth) {
+        img.style.maxWidth = "480px";
+        img.style.width = "100%";
+        img.style.height = "auto";
+        img.style.borderRadius = "10px";
+        img.style.display = "block";
+        img.style.margin = ".75rem auto";
+      }
+    });
+  }, 50);
   quill.setSelection(range.index + 1);
 }
