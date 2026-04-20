@@ -154,6 +154,10 @@ button{cursor:pointer;}
   margin: .75rem auto;
   box-shadow: 0 2px 12px rgba(68,94,139,.1);
 }
+.ql-editor img:not([style*="width"]) {
+  max-width: 480px;
+  width: 100%;
+}
 
 /* ── Rich editor (custom) ── */
 .re-wrap{border:1.5px solid var(--line2);border-radius:var(--radius-md);overflow:hidden;background:var(--surface);}
