@@ -44,6 +44,7 @@
         <div class="field full"><label>Title *</label><input class="input" id="f-title" placeholder="Fact headline..." required/></div>
         <div class="field"><label>Category</label><input class="input" id="f-category" placeholder="e.g. History, Web, Security"/></div>
         <div class="field"><label>Source URL</label><input class="input" id="f-source" placeholder="https://..."/></div>
+        <div class="field"><label>Thumbnail Image URL <span style="font-weight:400;color:#888;font-size:.8rem">(optional)</span></label><input class="input" id="f-imageUrl" placeholder="https://..."/></div>
         <div class="field full"><label>Body *</label><textarea class="textarea" id="f-body" rows="4" placeholder="The interesting fact details..."></textarea></div>
       </div>
       <div class="divider"></div>
@@ -141,13 +142,13 @@ function toast(msg,type="success"){let w=document.getElementById("tw");if(!w){w=
 function formatDate(ts){if(!ts)return"—";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});}
 
 let editId=null,allDocs=[];
-function resetForm(){["f-title","f-category","f-source","f-body"].forEach(id=>document.getElementById(id).value="");editId=null;updatePreview();}
+function resetForm(){["f-title","f-category","f-source","f-body","f-imageUrl"].forEach(id=>document.getElementById(id).value="");editId=null;updatePreview();}
 document.getElementById("clearBtn").addEventListener("click",resetForm);
 
 document.getElementById("saveBtn").addEventListener("click",async()=>{
   const title=document.getElementById("f-title").value.trim(),body=document.getElementById("f-body").value.trim();
   if(!title||!body){toast("Title and Body are required.","error");return;}
-  const data={title,category:document.getElementById("f-category").value.trim(),body,source:document.getElementById("f-source").value.trim()};
+  const data={title,category:document.getElementById("f-category").value.trim(),body,source:document.getElementById("f-source").value.trim(),imageUrl:document.getElementById("f-imageUrl").value.trim()};
   try{if(editId){await updateDoc(doc(db,"facts",editId),data);toast("Fact updated ✓");}else{data.createdAt=serverTimestamp();const ref=await addDoc(collection(db,"facts"),data);await saveNotification(data.title,data.category,"facts",ref.id);toast("Fact added ✓");}formCard.style.display="none";resetForm();}catch(e){toast("Error: "+e.message,"error");}
 });
 
@@ -167,7 +168,7 @@ function renderList(){const q=searchInput.value.toLowerCase();const cat=category
 window.toggleFeatured = async function(id, isFeatured) {
   try { await updateDoc(doc(db,"facts",id),{featured:!isFeatured}); toast(!isFeatured?"⭐ Featured":"Feature removed"); } catch(e){toast("Error: "+e.message,"error");}
 };
-window.editDoc=function(id){const d=allDocs.find(x=>x.id===id);if(!d)return;editId=id;document.getElementById("f-title").value=d.title||"";document.getElementById("f-category").value=d.category||"";document.getElementById("f-source").value=d.source||"";document.getElementById("f-body").value=d.body||"";document.getElementById("formTitle").textContent="Edit Fact";formCard.style.display="block";updatePreview();formCard.scrollIntoView({behavior:"smooth"});};
+window.editDoc=function(id){const d=allDocs.find(x=>x.id===id);if(!d)return;editId=id;document.getElementById("f-title").value=d.title||"";document.getElementById("f-category").value=d.category||"";document.getElementById("f-source").value=d.source||"";document.getElementById("f-body").value=d.body||"";document.getElementById("f-imageUrl").value=d.imageUrl||"";document.getElementById("formTitle").textContent="Edit Fact";formCard.style.display="block";updatePreview();formCard.scrollIntoView({behavior:"smooth"});};
 window.delDoc=async function(id){if(!confirm("Delete this fact?"))return;try{await deleteDoc(doc(db,"facts",id));toast("Deleted ✓");}catch(e){toast(e.message,"error");}};
 
 // ── GitHub JSON Import ──

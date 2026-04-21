@@ -45,10 +45,13 @@
       <div class="form-grid">
         <div class="field full"><label>Title *</label><input class="input" id="f-title" placeholder="Tip title..." required/></div>
         <div class="field"><label>Category</label><input class="input" id="f-category" placeholder="e.g. CSS, JavaScript"/></div>
-        <div class="field"><label>Tags</label><input class="input" id="f-tags" placeholder="css, tips, layout"/></div>
-        <div class="field full"><label>Body * (Rich Editor)</label>
+        <div class="field"><label>Read Time</label><input class="input" id="f-readTime" placeholder="e.g. 2 min read"/></div>
+        <div class="field full"><label>Short Description *</label><textarea class="textarea" id="f-description" rows="2" placeholder="Brief summary shown on cards..."></textarea></div>
+        <div class="field full"><label>Full Content (Rich Editor)</label>
           <div id="tipEditor" style="min-height:220px"></div>
         </div>
+        <div class="field"><label>Tags</label><input class="input" id="f-tags" placeholder="css, tips, layout"/></div>
+        <div class="field"><label>Thumbnail Image URL <span style="font-weight:400;color:#888;font-size:.8rem">(optional)</span></label><input class="input" id="f-imageUrl" placeholder="https://..."/></div>
         <div class="field full"><label>Code Example (optional)</label>
           <div class="code-editor-wrap">
             <div class="code-editor-bar"><div class="code-dot" style="background:#ff5f57"></div><div class="code-dot" style="background:#febc2e"></div><div class="code-dot" style="background:#28c840"></div><span style="color:#6c7086;font-size:.75rem;margin-left:.5rem">code snippet</span></div>
@@ -59,9 +62,9 @@
       <div class="divider"></div>
       <p class="preview-label">Live Card Preview</p>
       <div class="preview-card" id="livePreview">
-        <div class="p-badge-row"><span class="badge badge-green" id="pv-cat">Category</span></div>
+        <div class="p-badge-row"><span class="badge badge-green" id="pv-cat">Category</span><span class="badge badge-gray" id="pv-time">Read time</span></div>
         <h3 id="pv-title">Tip title</h3>
-        <p id="pv-body">Tip body will appear here...</p>
+        <p id="pv-desc">Short description will appear here...</p>
       </div>
       <div class="action-row">
         <button class="btn btn-primary" id="saveBtn"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save Tip</button>
@@ -163,22 +166,22 @@ const formCard=document.getElementById("formCard");
 document.getElementById("showFormBtn").addEventListener("click",()=>{editId=null;resetForm();formCard.style.display="block";document.getElementById("formTitle").textContent="New Tip";formCard.scrollIntoView({behavior:"smooth"});});
 document.getElementById("cancelFormBtn").addEventListener("click",()=>{formCard.style.display="none";resetForm();});
 
-function updatePreview(){document.getElementById("pv-title").textContent=document.getElementById("f-title").value||"Tip title";document.getElementById("pv-body").textContent=quill.getText().trim()||"Tip body...";document.getElementById("pv-cat").textContent=document.getElementById("f-category").value||"Category";}
-["f-title","f-category"].forEach(id=>document.getElementById(id).addEventListener("input",updatePreview));
-quill.on("text-change", updatePreview);
+function updatePreview(){document.getElementById("pv-title").textContent=document.getElementById("f-title").value||"Tip title";document.getElementById("pv-desc").textContent=document.getElementById("f-description").value||"Short description...";document.getElementById("pv-cat").textContent=document.getElementById("f-category").value||"Category";document.getElementById("pv-time").textContent=document.getElementById("f-readTime").value||"Read time";}
+["f-title","f-description","f-category","f-readTime"].forEach(id=>document.getElementById(id).addEventListener("input",updatePreview));
 
 function esc(t){return String(t??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");}
 function toast(msg,type="success"){let w=document.getElementById("tw");if(!w){w=document.createElement("div");w.id="tw";w.className="toast-wrap";document.body.appendChild(w);}const icons={success:`<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`,error:`<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>`};const el=document.createElement("div");el.className=`toast toast-${type}`;el.innerHTML=(icons[type]||"")+msg;w.appendChild(el);setTimeout(()=>el.remove(),3200);}
 function formatDate(ts){if(!ts)return"—";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});}
 
 let editId=null,allDocs=[];
-function resetForm(){["f-title","f-category","f-tags","f-example"].forEach(id=>document.getElementById(id).value="");quill.setContents([]);editId=null;updatePreview();}
+function resetForm(){["f-title","f-category","f-readTime","f-description","f-tags","f-example","f-imageUrl"].forEach(id=>document.getElementById(id).value="");quill.setContents([]);editId=null;updatePreview();}
 document.getElementById("clearBtn").addEventListener("click",resetForm);
 
 document.getElementById("saveBtn").addEventListener("click",async()=>{
   const title=document.getElementById("f-title").value.trim();
-  if(!title){toast("Title is required.","error");return;}
-  const data={title,category:document.getElementById("f-category").value.trim(),body:quill.root.innerHTML,example:document.getElementById("f-example").value.trim(),tags:document.getElementById("f-tags").value.trim()};
+  const description=document.getElementById("f-description").value.trim();
+  if(!title||!description){toast("Title and Description are required.","error");return;}
+  const data={title,category:document.getElementById("f-category").value.trim(),readTime:document.getElementById("f-readTime").value.trim(),description,body:quill.root.innerHTML,example:document.getElementById("f-example").value.trim(),tags:document.getElementById("f-tags").value.trim(),imageUrl:document.getElementById("f-imageUrl").value.trim()};
   try{if(editId){await updateDoc(doc(db,"tips",editId),data);toast("Tip updated ✓");}else{data.createdAt=serverTimestamp();const ref=await addDoc(collection(db,"tips"),data);await saveNotification(data.title,data.category,"tips",ref.id);toast("Tip added ✓");}formCard.style.display="none";resetForm();}catch(e){toast("Error: "+e.message,"error");}
 });
 
@@ -198,7 +201,7 @@ function renderList(){const q=searchInput.value.toLowerCase();const cat=category
 window.toggleFeatured = async function(id, isFeatured) {
   try { await updateDoc(doc(db,"tips",id),{featured:!isFeatured}); toast(!isFeatured?"⭐ Featured":"Feature removed"); } catch(e){toast("Error: "+e.message,"error");}
 };
-window.editDoc=function(id){const d=allDocs.find(x=>x.id===id);if(!d)return;editId=id;document.getElementById("f-title").value=d.title||"";document.getElementById("f-category").value=d.category||"";document.getElementById("f-tags").value=d.tags||"";document.getElementById("f-example").value=d.example||"";quill.root.innerHTML=d.body||"";document.getElementById("formTitle").textContent="Edit Tip";formCard.style.display="block";updatePreview();formCard.scrollIntoView({behavior:"smooth"});};
+window.editDoc=function(id){const d=allDocs.find(x=>x.id===id);if(!d)return;editId=id;document.getElementById("f-title").value=d.title||"";document.getElementById("f-category").value=d.category||"";document.getElementById("f-readTime").value=d.readTime||"";document.getElementById("f-description").value=d.description||"";document.getElementById("f-tags").value=d.tags||"";document.getElementById("f-example").value=d.example||"";document.getElementById("f-imageUrl").value=d.imageUrl||"";quill.root.innerHTML=d.body||"";document.getElementById("formTitle").textContent="Edit Tip";formCard.style.display="block";updatePreview();formCard.scrollIntoView({behavior:"smooth"});};
 window.delDoc=async function(id){if(!confirm("Delete this tip?"))return;try{await deleteDoc(doc(db,"tips",id));toast("Deleted ✓");}catch(e){toast(e.message,"error");}};
 
 // ── GitHub JSON Import ──

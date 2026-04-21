@@ -49,6 +49,7 @@
         <div class="field full"><label>URL *</label><input class="input" id="f-url" placeholder="https://..." required/></div>
         <div class="field full"><label>Description *</label><textarea class="textarea" id="f-description" rows="3" placeholder="What is this resource about..."></textarea></div>
         <div class="field full"><label>Tags</label><input class="input" id="f-tags" placeholder="free, beginner, reference"/></div>
+        <div class="field full"><label>Thumbnail Image URL <span style="font-weight:400;color:#888;font-size:.8rem">(optional)</span></label><input class="input" id="f-imageUrl" placeholder="https://..."/></div>
       </div>
       <div class="divider"></div>
       <p class="preview-label">Live Card Preview</p>
@@ -144,13 +145,13 @@ function toast(msg,type="success"){let w=document.getElementById("tw");if(!w){w=
 function formatDate(ts){if(!ts)return"—";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});}
 
 let editId=null,allDocs=[];
-function resetForm(){["f-title","f-category","f-url","f-description","f-tags"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-type").value="Tool";editId=null;updatePreview();}
+function resetForm(){["f-title","f-category","f-url","f-description","f-tags","f-imageUrl"].forEach(id=>document.getElementById(id).value="");document.getElementById("f-type").value="Tool";editId=null;updatePreview();}
 document.getElementById("clearBtn").addEventListener("click",resetForm);
 
 document.getElementById("saveBtn").addEventListener("click",async()=>{
   const title=document.getElementById("f-title").value.trim(),url=document.getElementById("f-url").value.trim(),desc=document.getElementById("f-description").value.trim();
   if(!title||!url||!desc){toast("Title, URL and Description are required.","error");return;}
-  const data={title,type:document.getElementById("f-type").value,category:document.getElementById("f-category").value.trim(),url,description:desc,tags:document.getElementById("f-tags").value.trim()};
+  const data={title,type:document.getElementById("f-type").value,category:document.getElementById("f-category").value.trim(),url,description:desc,tags:document.getElementById("f-tags").value.trim(),imageUrl:document.getElementById("f-imageUrl").value.trim()};
   try{if(editId){await updateDoc(doc(db,"resources",editId),data);toast("Resource updated ✓");}else{data.createdAt=serverTimestamp();const ref=await addDoc(collection(db,"resources"),data);await saveNotification(data.title,data.category,"resources",ref.id);toast("Resource added ✓");}formCard.style.display="none";resetForm();}catch(e){toast("Error: "+e.message,"error");}
 });
 

@@ -67,6 +67,7 @@
           <div id="articleEditor" style="min-height:220px"></div>
         </div>
         <div class="field full"><label>Tags (comma separated)</label><input class="input" id="f-tags" placeholder="javascript, beginner, es6"/></div>
+        <div class="field full"><label>Thumbnail Image URL <span style="font-weight:400;color:#888;font-size:.8rem">(optional)</span></label><input class="input" id="f-imageUrl" placeholder="https://... (.jpg, .png, .webp)"/></div>
       </div>
 
       <!-- Live Preview -->
@@ -217,7 +218,7 @@ let editId = null;
 let allDocs = [];
 
 function resetForm() {
-  ["f-title","f-category","f-readTime","f-description","f-tags"].forEach(id => document.getElementById(id).value = "");
+  ["f-title","f-category","f-readTime","f-description","f-tags","f-imageUrl"].forEach(id => document.getElementById(id).value = "");
   quill.setContents([]);
   editId = null;
   updatePreview();
@@ -237,6 +238,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     description,
     content: quill.root.innerHTML,
     tags: document.getElementById("f-tags").value.trim(),
+    imageUrl: document.getElementById("f-imageUrl").value.trim(),
   };
 
   try {
@@ -363,6 +365,7 @@ window.editDoc = function(id) {
   document.getElementById("f-readTime").value = d.readTime||"";
   document.getElementById("f-description").value = d.description||"";
   document.getElementById("f-tags").value = d.tags||"";
+  document.getElementById("f-imageUrl").value = d.imageUrl||"";
   quill.root.innerHTML = d.content || "";
   document.getElementById("formTitle").textContent = "Edit Article";
   formCard.style.display = "block";
