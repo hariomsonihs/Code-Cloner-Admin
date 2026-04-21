@@ -1,4 +1,4 @@
-const IMGBB_KEY = window.__env?.imgbbKey || "";
+const IMGBB_KEY = "fccbe0d61aa2c365cf710c34f0e8cd38"; // Free tier: 5000 uploads/month
 
 export function addImageUploadToQuill(quill, app) {
   quill.getModule("toolbar").addHandler("image", () => {
