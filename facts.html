@@ -4,9 +4,10 @@
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Facts — Code Cloner Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600;700&family=Roboto+Mono:wght@400;500;700&family=Dancing+Script:wght@400;700&family=Pacifico&family=Caveat:wght@400;700&family=Bebas+Neue&family=Raleway:wght@300;400;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="admin.css"/>
   <script src="/env-config.js"></script>
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet"/>
 </head>
 <body class="admin-root">
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -42,7 +43,19 @@
       <div class="card-head"><h2 id="formTitle">New Fact</h2><button class="btn btn-soft btn-sm" id="cancelFormBtn">Cancel</button></div>
       <div class="form-grid">
         <div class="field full"><label>Title *</label><input class="input" id="f-title" placeholder="Fact headline..." required/></div>
-        <div class="field"><label>Category</label><input class="input" id="f-category" placeholder="e.g. History, Web, Security"/></div>
+        <div class="field"><label>Category</label>
+          <select class="select" id="f-category">
+            <option value="">Select Category</option>
+            <option>Science</option>
+            <option>Technology</option>
+            <option>History</option>
+            <option>Nature</option>
+            <option>Space</option>
+            <option>Human Body</option>
+            <option>Animals</option>
+            <option>Other</option>
+          </select>
+        </div>
         <div class="field"><label>Source URL</label><input class="input" id="f-source" placeholder="https://..."/></div>
         <div class="field full"><label>Thumbnail Image URL <span style="font-weight:400;color:#888;font-size:.8rem">(optional)</span></label>
           <div style="display:flex;gap:.5rem;align-items:flex-end">
@@ -53,14 +66,17 @@
             </button>
           </div>
         </div>
-        <div class="field full"><label>Body *</label><textarea class="textarea" id="f-body" rows="4" placeholder="The interesting fact details..."></textarea></div>
+        <div class="field full"><label>Short Description</label><textarea class="textarea" id="f-description" rows="2" placeholder="Brief summary for card preview..."></textarea></div>
+        <div class="field full"><label>Full Content (Rich Editor)</label>
+          <div id="factEditor" style="min-height:220px"></div>
+        </div>
       </div>
       <div class="divider"></div>
       <p class="preview-label">Live Card Preview</p>
       <div class="preview-card" id="livePreview">
         <div class="p-badge-row"><span class="badge badge-orange" id="pv-cat">Category</span></div>
         <h3 id="pv-title">Fact title</h3>
-        <p id="pv-body">Fact body will appear here...</p>
+        <p id="pv-desc">Short description will appear here...</p>
       </div>
       <div class="action-row">
         <button class="btn btn-primary" id="saveBtn"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save Fact</button>
@@ -123,15 +139,45 @@
   </div>
 </div>
 
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { saveNotification } from "./notif-helper.js";
+import { addImageUploadToQuill } from "./quill-image.js";
 import { initMediaPicker, openMediaPicker } from "./media-picker.js";
+
+// Register custom fonts with Quill
+const Font = Quill.import('formats/font');
+Font.whitelist = ['outfit', 'poppins', 'playfair', 'roboto-mono', 'dancing', 'pacifico', 'caveat', 'bebas', 'raleway', 'times'];
+Quill.register(Font, true);
+
+const quill = new Quill("#factEditor", {
+  theme: "snow",
+  placeholder: "Write the full fact content here...",
+  modules: {
+    toolbar: [
+      [{ font: ['outfit', 'poppins', 'playfair', 'roboto-mono', 'dancing', 'pacifico', 'caveat', 'bebas', 'raleway', 'times'] }],
+      [{ header: [1,2,3,4,5,6,false] }],
+      [{ size: ['small', false, 'large', 'huge'] }],
+      ["bold","italic","underline","strike"],
+      [{ color: [] }, { background: [] }],
+      [{ align: [] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      ["blockquote","code-block"],
+      [{ script: "sub" }, { script: "super" }],
+      ["link","image"],
+      ["clean"]
+    ],
+    history: { delay: 1000, maxStack: 100, userOnly: true }
+  }
+});
 
 const cfg=window.__env||{};
 const app=initializeApp(cfg);const db=getFirestore(app);const auth=getAuth(app);
+addImageUploadToQuill(quill, app);
 initMediaPicker(app);
 
 // Media picker button
@@ -149,21 +195,21 @@ const formCard=document.getElementById("formCard");
 document.getElementById("showFormBtn").addEventListener("click",()=>{editId=null;resetForm();formCard.style.display="block";document.getElementById("formTitle").textContent="New Fact";formCard.scrollIntoView({behavior:"smooth"});});
 document.getElementById("cancelFormBtn").addEventListener("click",()=>{formCard.style.display="none";resetForm();});
 
-function updatePreview(){document.getElementById("pv-title").textContent=document.getElementById("f-title").value||"Fact title";document.getElementById("pv-body").textContent=document.getElementById("f-body").value||"Fact body...";document.getElementById("pv-cat").textContent=document.getElementById("f-category").value||"Category";}
-["f-title","f-body","f-category"].forEach(id=>document.getElementById(id).addEventListener("input",updatePreview));
+function updatePreview(){document.getElementById("pv-title").textContent=document.getElementById("f-title").value||"Fact title";document.getElementById("pv-desc").textContent=document.getElementById("f-description").value||"Short description...";document.getElementById("pv-cat").textContent=document.getElementById("f-category").value||"Category";}
+["f-title","f-description","f-category"].forEach(id=>document.getElementById(id).addEventListener("input",updatePreview));
 
 function esc(t){return String(t??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");}
 function toast(msg,type="success"){let w=document.getElementById("tw");if(!w){w=document.createElement("div");w.id="tw";w.className="toast-wrap";document.body.appendChild(w);}const icons={success:`<svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>`,error:`<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>`};const el=document.createElement("div");el.className=`toast toast-${type}`;el.innerHTML=(icons[type]||"")+msg;w.appendChild(el);setTimeout(()=>el.remove(),3200);}
 function formatDate(ts){if(!ts)return"—";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});}
 
 let editId=null,allDocs=[];
-function resetForm(){["f-title","f-category","f-source","f-body","f-imageUrl"].forEach(id=>document.getElementById(id).value="");editId=null;updatePreview();}
+function resetForm(){["f-title","f-category","f-source","f-description","f-imageUrl"].forEach(id=>document.getElementById(id).value="");quill.setContents([]);editId=null;updatePreview();}
 document.getElementById("clearBtn").addEventListener("click",resetForm);
 
 document.getElementById("saveBtn").addEventListener("click",async()=>{
-  const title=document.getElementById("f-title").value.trim(),body=document.getElementById("f-body").value.trim();
-  if(!title||!body){toast("Title and Body are required.","error");return;}
-  const data={title,category:document.getElementById("f-category").value.trim(),body,source:document.getElementById("f-source").value.trim(),imageUrl:document.getElementById("f-imageUrl").value.trim()};
+  const title=document.getElementById("f-title").value.trim(),description=document.getElementById("f-description").value.trim();
+  if(!title||!description){toast("Title and Description are required.","error");return;}
+  const data={title,category:document.getElementById("f-category").value.trim(),description,body:quill.root.innerHTML,source:document.getElementById("f-source").value.trim(),imageUrl:document.getElementById("f-imageUrl").value.trim()};
   try{if(editId){await updateDoc(doc(db,"facts",editId),data);toast("Fact updated ✓");}else{data.createdAt=serverTimestamp();const ref=await addDoc(collection(db,"facts"),data);await saveNotification(data.title,data.category,"facts",ref.id);toast("Fact added ✓");}formCard.style.display="none";resetForm();}catch(e){toast("Error: "+e.message,"error");}
 });
 
@@ -178,12 +224,12 @@ document.getElementById("bulkDeleteBtn").addEventListener("click",async()=>{if(!
 document.getElementById("bulkClearBtn").addEventListener("click",()=>{selectedIds.clear();document.querySelectorAll(".row-check").forEach(cb=>cb.checked=false);document.getElementById("selectAll").checked=false;updateBulkBar();});
 window.toggleSelect=function(id,checked){if(checked)selectedIds.add(id);else selectedIds.delete(id);updateBulkBar();const all=document.querySelectorAll(".row-check");document.getElementById("selectAll").checked=all.length>0&&[...all].every(c=>c.checked);};
 onSnapshot(query(collection(db,"facts"),orderBy("createdAt","desc")),snap=>{allDocs=snap.docs.map(d=>({id:d.id,...d.data()}));document.getElementById("factCount").textContent=allDocs.length;const cats=[...new Set(allDocs.map(d=>d.category).filter(Boolean))];const cf=document.getElementById("categoryFilter");const prev=cf.value;cf.innerHTML=`<option value="">All Categories</option>`+cats.map(c=>`<option value="${esc(c)}" ${prev===c?'selected':''}>${esc(c)}</option>`).join("");renderList();});
-function renderList(){const q=searchInput.value.toLowerCase();const cat=categoryFilter.value;const filtered=allDocs.filter(d=>(!q||(d.title+d.category).toLowerCase().includes(q))&&(!cat||d.category===cat));const tbody=document.getElementById("factList");if(!filtered.length){tbody.innerHTML=`<tr><td colspan="6"><div class="empty-state"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><p>No facts found.</p></div></td></tr>`;return;}tbody.innerHTML=filtered.map(d=>`<tr><td><input type="checkbox" class="row-check" data-id="${d.id}" ${selectedIds.has(d.id)?'checked':''} onchange="toggleSelect('${d.id}',this.checked)"/></td><td><div class="td-title">${esc(d.title)}</div><div class="td-muted">${esc((d.body||"").substring(0,60))}...</div></td><td><span class="badge badge-orange">${esc(d.category||"—")}</span></td><td class="td-muted">${d.source?`<a href="${esc(d.source)}" target="_blank" style="color:var(--brand)">Link</a>`:"—"}</td><td class="td-muted">${formatDate(d.createdAt)}</td><td><div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="btn btn-sm" style="background:${d.featured?'#fef08a':'rgba(245,158,11,.08)'};color:${d.featured?'#854d0e':'var(--orange)'};border:1.5px solid rgba(245,158,11,.3)" onclick="toggleFeatured('${d.id}',${!!d.featured})">${d.featured?'⭐ Featured':'☆ Feature'}</button><button class="btn btn-green btn-sm" onclick="editDoc('${d.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="delDoc('${d.id}')">Delete</button></div></td></tr>`).join("");}
+function renderList(){const q=searchInput.value.toLowerCase();const cat=categoryFilter.value;const filtered=allDocs.filter(d=>(!q||(d.title+d.category).toLowerCase().includes(q))&&(!cat||d.category===cat));const tbody=document.getElementById("factList");if(!filtered.length){tbody.innerHTML=`<tr><td colspan="6"><div class="empty-state"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><p>No facts found.</p></div></td></tr>`;return;}tbody.innerHTML=filtered.map(d=>`<tr><td><input type="checkbox" class="row-check" data-id="${d.id}" ${selectedIds.has(d.id)?'checked':''} onchange="toggleSelect('${d.id}',this.checked)"/></td><td><div class="td-title">${esc(d.title)}</div><div class="td-muted">${esc((d.description||d.body||"").substring(0,60))}...</div></td><td><span class="badge badge-orange">${esc(d.category||"—")}</span></td><td class="td-muted">${d.source?`<a href="${esc(d.source)}" target="_blank" style="color:var(--brand)">Link</a>`:"—"}</td><td class="td-muted">${formatDate(d.createdAt)}</td><td><div style="display:flex;gap:.4rem;flex-wrap:wrap"><button class="btn btn-sm" style="background:${d.featured?'#fef08a':'rgba(245,158,11,.08)'};color:${d.featured?'#854d0e':'var(--orange)'};border:1.5px solid rgba(245,158,11,.3)" onclick="toggleFeatured('${d.id}',${!!d.featured})">${d.featured?'⭐ Featured':'☆ Feature'}</button><button class="btn btn-green btn-sm" onclick="editDoc('${d.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="delDoc('${d.id}')">Delete</button></div></td></tr>`).join("");}
 
 window.toggleFeatured = async function(id, isFeatured) {
   try { await updateDoc(doc(db,"facts",id),{featured:!isFeatured}); toast(!isFeatured?"⭐ Featured":"Feature removed"); } catch(e){toast("Error: "+e.message,"error");}
 };
-window.editDoc=function(id){const d=allDocs.find(x=>x.id===id);if(!d)return;editId=id;document.getElementById("f-title").value=d.title||"";document.getElementById("f-category").value=d.category||"";document.getElementById("f-source").value=d.source||"";document.getElementById("f-body").value=d.body||"";document.getElementById("f-imageUrl").value=d.imageUrl||"";document.getElementById("formTitle").textContent="Edit Fact";formCard.style.display="block";updatePreview();formCard.scrollIntoView({behavior:"smooth"});};
+window.editDoc=function(id){const d=allDocs.find(x=>x.id===id);if(!d)return;editId=id;document.getElementById("f-title").value=d.title||"";document.getElementById("f-category").value=d.category||"";document.getElementById("f-source").value=d.source||"";document.getElementById("f-description").value=d.description||"";document.getElementById("f-imageUrl").value=d.imageUrl||"";quill.root.innerHTML=d.body||"";document.getElementById("formTitle").textContent="Edit Fact";formCard.style.display="block";updatePreview();formCard.scrollIntoView({behavior:"smooth"});};
 window.delDoc=async function(id){if(!confirm("Delete this fact?"))return;try{await deleteDoc(doc(db,"facts",id));toast("Deleted ✓");}catch(e){toast(e.message,"error");}};
 
 // ── GitHub JSON Import ──

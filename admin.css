@@ -320,3 +320,146 @@ tr:hover td{background:var(--bg2);}
   .page-body{padding:.9rem .8rem 3rem;}
   .topbar{padding:.6rem .9rem;}
 }
+
+
+/* ── Quill Font Families ── */
+.ql-font-sans-serif { font-family: "Outfit", sans-serif !important; }
+.ql-font-serif { font-family: Georgia, "Times New Roman", serif !important; }
+.ql-font-monospace { font-family: Consolas, "Courier New", monospace !important; }
+.ql-font-cursive { font-family: "Brush Script MT", cursive !important; }
+.ql-font-fantasy { font-family: "Papyrus", fantasy !important; }
+
+/* Toolbar font dropdown labels */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="sans-serif"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="sans-serif"]::before {
+  content: "Sans Serif" !important;
+  font-family: "Outfit", sans-serif !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="serif"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before {
+  content: "Serif" !important;
+  font-family: Georgia, serif !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="monospace"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before {
+  content: "Monospace" !important;
+  font-family: Consolas, monospace !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="cursive"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="cursive"]::before {
+  content: "Cursive" !important;
+  font-family: cursive !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="fantasy"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="fantasy"]::before {
+  content: "Fantasy" !important;
+  font-family: fantasy !important;
+}
+
+
+/* ── Modern Google Fonts for Quill ── */
+.ql-font-outfit { font-family: "Outfit", sans-serif !important; }
+.ql-font-poppins { font-family: "Poppins", sans-serif !important; }
+.ql-font-playfair { font-family: "Playfair Display", serif !important; }
+.ql-font-roboto-mono { font-family: "Roboto Mono", monospace !important; }
+.ql-font-dancing { font-family: "Dancing Script", cursive !important; }
+.ql-font-pacifico { font-family: "Pacifico", cursive !important; }
+.ql-font-caveat { font-family: "Caveat", cursive !important; }
+.ql-font-bebas { font-family: "Bebas Neue", sans-serif !important; }
+.ql-font-raleway { font-family: "Raleway", sans-serif !important; }
+.ql-font-times { font-family: "Times New Roman", serif !important; }
+
+/* Toolbar font dropdown labels */
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="outfit"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="outfit"]::before {
+  content: "Outfit" !important;
+  font-family: "Outfit", sans-serif !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="poppins"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="poppins"]::before {
+  content: "Poppins" !important;
+  font-family: "Poppins", sans-serif !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="playfair"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="playfair"]::before {
+  content: "Playfair Display" !important;
+  font-family: "Playfair Display", serif !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto-mono"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto-mono"]::before {
+  content: "Roboto Mono" !important;
+  font-family: "Roboto Mono", monospace !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="dancing"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="dancing"]::before {
+  content: "Dancing Script" !important;
+  font-family: "Dancing Script", cursive !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="pacifico"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="pacifico"]::before {
+  content: "Pacifico" !important;
+  font-family: "Pacifico", cursive !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="caveat"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="caveat"]::before {
+  content: "Caveat" !important;
+  font-family: "Caveat", cursive !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="bebas"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="bebas"]::before {
+  content: "Bebas Neue" !important;
+  font-family: "Bebas Neue", sans-serif !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="raleway"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="raleway"]::before {
+  content: "Raleway" !important;
+  font-family: "Raleway", sans-serif !important;
+}
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="times"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times"]::before {
+  content: "Times New Roman" !important;
+  font-family: "Times New Roman", serif !important;
+}
+
+
+/* ── Quill Editor Font Whitelist Registration ── */
+.ql-editor .ql-font-outfit,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="outfit"]::before {
+  font-family: "Outfit", sans-serif !important;
+}
+.ql-editor .ql-font-poppins,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="poppins"]::before {
+  font-family: "Poppins", sans-serif !important;
+}
+.ql-editor .ql-font-playfair,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="playfair"]::before {
+  font-family: "Playfair Display", serif !important;
+}
+.ql-editor .ql-font-roboto-mono,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto-mono"]::before {
+  font-family: "Roboto Mono", monospace !important;
+}
+.ql-editor .ql-font-dancing,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="dancing"]::before {
+  font-family: "Dancing Script", cursive !important;
+}
+.ql-editor .ql-font-pacifico,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="pacifico"]::before {
+  font-family: "Pacifico", cursive !important;
+}
+.ql-editor .ql-font-caveat,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="caveat"]::before {
+  font-family: "Caveat", cursive !important;
+}
+.ql-editor .ql-font-bebas,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="bebas"]::before {
+  font-family: "Bebas Neue", sans-serif !important;
+}
+.ql-editor .ql-font-raleway,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="raleway"]::before {
+  font-family: "Raleway", sans-serif !important;
+}
+.ql-editor .ql-font-times,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="times"]::before {
+  font-family: "Times New Roman", serif !important;
+}
